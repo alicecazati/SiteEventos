@@ -1,4 +1,4 @@
-Requisitos feitos por Alice Cazati:
+Requisitos do sistema de apoio à Gestão de Eventos feitos por Alice Cazati:
 
 a) O sistema deve manter o cadastro de localidades, assim como de todos os espaços
 (públicos e privados) disponíveis para realização de eventos.
