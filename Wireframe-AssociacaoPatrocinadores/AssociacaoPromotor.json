@@ -1,0 +1,12 @@
+{
+  "patrocinadores": [
+    {
+      "id": "ad3c",
+      "empresa": "Amora",
+      "cnpj": " 00.623.904/0001-73",
+      "nomePromotor": "Marcela",
+      "evento": "Festa Junina",
+      "metodoPagamento": "pix"
+    }
+  ]
+}

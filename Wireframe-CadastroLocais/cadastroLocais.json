@@ -1,0 +1,20 @@
+{
+  "espacos": [
+    {
+      "id": "e86b",
+      "cpf": "123.988.076-65",
+      "comprovanteEndereco": "Captura de tela 2025-03-05 175639.png",
+      "endereco": "Rua Quintino Bocaiúva, 354",
+      "bairro": "Vila da Serra",
+      "cidade": "Abadia dos Dourados",
+      "tamanho": 10002,
+      "capacidade": 90,
+      "acessibilidade": "sim",
+      "caracteristicas": "cadeiras",
+      "fotos": [
+        "Captura de tela 2025-03-12 090010.png"
+      ],
+      "valor": 1000
+    }
+  ]
+}

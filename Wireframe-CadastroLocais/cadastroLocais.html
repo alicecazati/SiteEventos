@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro de Novo Espaço</title>
+  <link rel="stylesheet" href="cadastroLocais.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Cadastro de Novo Espaço</h1>
+    <form id="cadastroEspaco">
+
+      <!-- CPF -->
+      <label for="cpf">CPF do Dono do Espaço:</label>
+      <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+
+      <!-- Comprovante de endereço -->
+      <label for="comprovante">Comprovante de Endereço:</label>
+      <input type="file" id="comprovante" name="comprovante" accept=".pdf,.jpg,.png" required>
+
+      <!-- Localização -->
+      <label for="endereco">Endereço:</label>
+      <input type="text" id="endereco" name="endereco" placeholder="Rua, número" required>
+
+      <label for="bairro">Bairro:</label>
+      <input type="text" id="bairro" name="bairro" required>
+
+      <label for="cidade">Cidade:</label>
+      <input type="text" id="cidade" name="cidade" required>
+
+      <!-- Características -->
+      <label for="tamanho">Tamanho (em m²):</label>
+      <input type="number" id="tamanho" name="tamanho" required>
+
+      <label for="capacidade">Capacidade (pessoas):</label>
+      <input type="number" id="capacidade" name="capacidade" required>
+
+      <label for="acessibilidade">Acessibilidade:</label>
+      <select id="acessibilidade" name="acessibilidade" required>
+        <option value="">Selecione</option>
+        <option value="sim">Sim</option>
+        <option value="nao">Não</option>
+      </select>
+
+      <label for="itens">Características:</label>
+      <textarea id="itens" name="itens" rows="3" placeholder="Ex: cadeiras, palco, iluminação..."></textarea>
+
+      <!-- Fotos -->
+      <label for="fotos">Fotos do Espaço:</label>
+      <input type="file" id="fotos" name="fotos" accept="image/*" multiple required>
+
+      <!-- Valor -->
+      <label for="valor">Valor do Aluguel (R$):</label>
+      <input type="number" id="valor" name="valor" step="0.01" required>
+
+      <!-- Botão -->
+      <button type="submit">Cadastrar Espaço</button>
+
+      <!-- Mensagem de retorno -->
+      <p id="mensagemErro" class="mensagem erro"></p>
+      <p id="mensagemSucesso" class="mensagem sucesso"></p>
+    </form>
+  </div>
+
+  <!-- SCRIPT para enviar os dados ao cadastroLocais.json via JSON Server -->
+  <script>
+    document.getElementById("cadastroEspaco").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      const dadosEspaco = {
+        cpf: formData.get("cpf"),
+        comprovanteEndereco: formData.get("comprovante")?.name || "",
+        endereco: formData.get("endereco"),
+        bairro: formData.get("bairro"),
+        cidade: formData.get("cidade"),
+        tamanho: Number(formData.get("tamanho")),
+        capacidade: Number(formData.get("capacidade")),
+        acessibilidade: formData.get("acessibilidade"),
+        caracteristicas: formData.get("itens"),
+        fotos: Array.from(formData.getAll("fotos")).map(f => f.name),
+        valor: parseFloat(formData.get("valor"))
+      };
+
+      fetch("http://localhost:3000/espacos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dadosEspaco)
+      })
+      .then(res => {
+        if (res.ok) {
+          document.getElementById("mensagemSucesso").innerText = "Espaço cadastrado com sucesso!";
+          document.getElementById("mensagemErro").innerText = "";
+          document.getElementById("cadastroEspaco").reset();
+        } else {
+          throw new Error("Erro ao cadastrar");
+        }
+      })
+      .catch(err => {
+        document.getElementById("mensagemErro").innerText = "Erro ao cadastrar espaço.";
+        document.getElementById("mensagemSucesso").innerText = "";
+      });
+    });
+  </script>
+</body>
+</html>

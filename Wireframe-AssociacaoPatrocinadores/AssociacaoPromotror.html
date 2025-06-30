@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Associação de Patrocinador</title>
+  <link rel="stylesheet" href="AssociacaoPromotor.css" />
+  <style>
+    .erro { color: red; }
+    .sucesso { color: green; }
+    .container { max-width: 600px; margin: auto; padding: 20px; }
+    form input, form select, form button { display: block; margin-bottom: 15px; width: 100%; padding: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Seja um Patrocinador</h1>
+    <form id="formPatrocinador">
+      <label for="empresa">Nome da Empresa:</label>
+      <input type="text" id="empresa" name="empresa" required />
+
+      <label for="cnpj">CNPJ:</label>
+      <input type="text" id="cnpj" name="cnpj" placeholder="00.000.000/0000-00" required />
+
+      <label for="nomePromotor">Nome do Promotor:</label>
+      <input type="text" id="nomePromotor" name="nomePromotor" required />
+
+      <p id="validacaoPerfil" class="sucesso" style="display:none;">Tudo pronto para se associar!</p>
+
+      <label for="evento">Selecione o Evento para Patrocinar:</label>
+      <select id="evento" name="evento" required>
+        <option value="">Selecione</option>
+        <option value="Festa Junina">Festa Junina</option>
+        <option value="Feira de Tecnologia">Feira de Tecnologia</option>
+        <option value="Festival de Música">Festival de Música</option>
+      </select>
+
+      <button type="button" id="associarBtn" disabled>Associar-se ao evento</button>
+
+      <div id="mensagens"></div>
+
+      <div id="pagamentoContainer" style="display:none; margin-top: 20px;">
+        <label for="metodoPagamento">Método de Pagamento:</label>
+        <select id="metodoPagamento" name="metodoPagamento" required>
+          <option value="">Selecione</option>
+          <option value="cartao">Cartão de Crédito</option>
+          <option value="boleto">Boleto Bancário</option>
+          <option value="pix">PIX</option>
+        </select>
+        <button type="button" id="confirmarPagamentoBtn" style="margin-top: 10px;">Confirmar Patrocínio</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('formPatrocinador');
+    const empresaInput = document.getElementById('empresa');
+    const cnpjInput = document.getElementById('cnpj');
+    const nomePromotorInput = document.getElementById('nomePromotor');
+    const eventoSelect = document.getElementById('evento');
+    const associarBtn = document.getElementById('associarBtn');
+    const pagamentoContainer = document.getElementById('pagamentoContainer');
+    const metodoPagamentoSelect = document.getElementById('metodoPagamento');
+    const confirmarPagamentoBtn = document.getElementById('confirmarPagamentoBtn');
+    const mensagensDiv = document.getElementById('mensagens');
+    const validacaoPerfilP = document.getElementById('validacaoPerfil');
+
+    function validarCNPJ(cnpj) {
+      cnpj = cnpj.replace(/[^\d]+/g,'');
+      if(cnpj.length !== 14 || /^(\d)\1{13}$/.test(cnpj)) return false;
+
+      let tamanho = cnpj.length - 2;
+      let numeros = cnpj.substring(0,tamanho);
+      let digitos = cnpj.substring(tamanho);
+      let soma = 0;
+      let pos = tamanho - 7;
+      for(let i = tamanho; i >= 1; i--) {
+        soma += numeros.charAt(tamanho - i) * pos--;
+        if(pos < 2) pos = 9;
+      }
+      let resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+      if(resultado != digitos.charAt(0)) return false;
+
+      tamanho++;
+      numeros = cnpj.substring(0,tamanho);
+      soma = 0;
+      pos = tamanho - 7;
+      for(let i = tamanho; i >= 1; i--) {
+        soma += numeros.charAt(tamanho - i) * pos--;
+        if(pos < 2) pos = 9;
+      }
+      resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+      return resultado == digitos.charAt(1);
+    }
+
+    function validarNome(nome) {
+      return nome.trim().length >= 3;
+    }
+
+    function limparMensagens() {
+      mensagensDiv.innerHTML = "";
+      validacaoPerfilP.style.display = "none";
+    }
+
+    function validarPerfil() {
+      limparMensagens();
+
+      if(!validarCNPJ(cnpjInput.value)) {
+        mensagensDiv.innerHTML = '<p class="erro">Informe CNPJ válido.</p>';
+        associarBtn.disabled = true;
+        return false;
+      }
+      if(!validarNome(nomePromotorInput.value)) {
+        mensagensDiv.innerHTML = '<p class="erro">Informe nome válido do promotor.</p>';
+        associarBtn.disabled = true;
+        return false;
+      }
+
+      validacaoPerfilP.style.display = "block";
+      associarBtn.disabled = false;
+      return true;
+    }
+
+    empresaInput.addEventListener("input", limparMensagens);
+    cnpjInput.addEventListener("input", limparMensagens);
+    nomePromotorInput.addEventListener("input", limparMensagens);
+    cnpjInput.addEventListener("blur", validarPerfil);
+    nomePromotorInput.addEventListener("blur", validarPerfil);
+
+    associarBtn.addEventListener("click", () => {
+      limparMensagens();
+      if(!validarPerfil()) return;
+
+      if(eventoSelect.value === "") {
+        mensagensDiv.innerHTML = '<p class="erro">Selecione um evento para patrocinar.</p>';
+        return;
+      }
+
+      mensagensDiv.innerHTML = '<p class="sucesso">Solicitação enviada ao Dono do Evento...</p>';
+
+      setTimeout(() => {
+        mensagensDiv.innerHTML = '<p class="sucesso">Solicitação autorizada!</p>';
+        pagamentoContainer.style.display = "block";
+      }, 1500);
+    });
+
+    confirmarPagamentoBtn.addEventListener("click", () => {
+      limparMensagens();
+
+      if (metodoPagamentoSelect.value === "") {
+        mensagensDiv.innerHTML = '<p class="erro">Informe método de pagamento válido.</p>';
+        return;
+      }
+
+      const patrocinador = {
+        empresa: empresaInput.value,
+        cnpj: cnpjInput.value,
+        nomePromotor: nomePromotorInput.value,
+        evento: eventoSelect.value,
+        metodoPagamento: metodoPagamentoSelect.value
+      };
+
+      fetch("http://localhost:3004/patrocinadores", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(patrocinador)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao salvar patrocínio.");
+        mensagensDiv.innerHTML = '<p class="sucesso">Patrocínio realizado com sucesso!</p>';
+        pagamentoContainer.style.display = "none";
+        form.reset();
+        associarBtn.disabled = true;
+        validacaoPerfilP.style.display = "none";
+      })
+      .catch(() => {
+        mensagensDiv.innerHTML = '<p class="erro">Erro ao salvar no servidor JSON.</p>';
+      });
+    });
+  </script>
+</body>
+</html>
