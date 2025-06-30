@@ -11,3 +11,5 @@ c) O sistema deve permitir o cadastro de promotores de evento, pessoas físicas 
 d) O sistema deve manter o cadastro de prestadores de serviço e fornecedores de produtos
 que contribuem com a realização de um evento.
 
+e) O sistema deve permitir a associação de patrocinadores ao evento e controlar os
+possíveis recursos financeiros advindos de patrocínio.
